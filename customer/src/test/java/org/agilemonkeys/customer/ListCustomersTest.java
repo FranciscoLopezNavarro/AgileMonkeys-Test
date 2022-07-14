@@ -16,14 +16,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @MicronautTest(transactional = false)
-class DeleteCustomerTest {
+class ListCustomersTest {
 
     @Inject
     private EmbeddedServer server;
@@ -49,33 +48,20 @@ class DeleteCustomerTest {
     }
 
     @Test
-    @DisplayName("Should return HTTP.405 if customerId is empty")
-    void shouldReturnHTTP405IfCustomerIdIsEmpty() {
+    @DisplayName("Should return HTTP.200 and empty list if there isn't any customer")
+    void shouldReturnHTTP200AndEmptyListIfNoMovements() {
         RestAssured.given()
-                .pathParams("customerId", "")
-                .delete("/customers/{customerId}")
+                .get("/customers")
                 .then()
                 .log()
                 .all()
-                .statusCode(405);
+                .statusCode(200)
+                .body("customers.size()", is(0));
     }
 
     @Test
-    @DisplayName("Should return HTTP.204 if customer does not exists (Delete = Idempotent method)")
-    void shouldReturnHTTP204IfCustomerDoesNotExists() {
-        RestAssured.given()
-                .pathParams("customerId", "2")
-                .delete("/customers/{customerId}")
-                .then()
-                .log()
-                .all()
-                .statusCode(204);
-    }
-
-    @Test
-    @DisplayName("Should return HTTP.204 and delete customer if it exists")
-    void shouldReturnHTTP204AndCreateNewCustomer() {
-
+    @DisplayName("Should return HTTP.200 and customer list if there is a customer")
+    void shouldReturnHTTP200AndCustomerListIfNoMovements() {
         var entityCustomer = new CustomerEntity();
         entityCustomer.setName("Francisco");
         entityCustomer.setSurname("Lopez");
@@ -83,14 +69,22 @@ class DeleteCustomerTest {
 
         var savedCustomer = customerRepository.save(entityCustomer);
 
-        var customer = RestAssured.given()
-                .pathParams("customerId", savedCustomer.getId())
-                .delete("/customers/{customerId}")
+
+        var customerList = RestAssured.given()
+                .get("/customers")
                 .then()
                 .log()
                 .all()
-                .statusCode(204);
+                .statusCode(200)
+                .extract()
+                .body()
+                .jsonPath().getList(".", Customer.class);
 
-        assertThat(customerRepository.findById(savedCustomer.getId()), is(Optional.empty()));
+        assertThat(customerList, notNullValue());
+        assertThat(customerList.size(), is(1));
+        assertThat(customerList.get(0).getCustomerId(), notNullValue());
+        assertThat(customerList.get(0).getName(), is("Francisco"));
+        assertThat(customerList.get(0).getSurname(), is("Lopez"));
+        assertThat(customerList.get(0).getDocumentId(), is("54353453Y"));
     }
 }
