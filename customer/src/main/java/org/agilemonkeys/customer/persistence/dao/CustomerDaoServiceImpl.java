@@ -32,4 +32,9 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
     public Optional<CustomerEntity> findCustomerById(Long customerId) {
         return customerRepository.findById(customerId);
     }
+
+    @Override
+    public void deleteCustomer(CustomerEntity customerEntity) {
+        customerRepository.delete(customerEntity);
+    }
 }
