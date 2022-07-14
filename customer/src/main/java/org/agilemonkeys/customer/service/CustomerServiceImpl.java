@@ -12,7 +12,9 @@ import org.agilemonkeys.customer.mapper.MapperService;
 import org.agilemonkeys.customer.persistence.dao.CustomerDaoServiceApi;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Singleton
 public class CustomerServiceImpl implements CustomerServiceApi {
@@ -86,6 +88,11 @@ public class CustomerServiceImpl implements CustomerServiceApi {
     @Override
     public void deleteCustomer(Long customerId) {
         customerDaoService.findCustomerById(customerId).ifPresent(customerDaoService::deleteCustomer);
+    }
+
+    @Override
+    public List<Customer> getCustomers() {
+        return customerDaoService.findAll().stream().map(this::mapCustomerEntityToCustomerDTO).collect(Collectors.toList());
     }
 
 

@@ -11,6 +11,8 @@ import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.api.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
 
+import java.util.List;
+
 @ExecuteOn(TaskExecutors.IO)
 @Controller(value = "/customers")
 public class CustomerController {
@@ -28,6 +30,14 @@ public class CustomerController {
     public HttpResponse<Customer> saveCustomer(@Body SaveCustomerRequest saveCustomerRequest) {
         return HttpResponse.status(HttpStatus.CREATED).body(customerService.createCustomer(saveCustomerRequest));
     }
+
+    @Get(
+            processes = MediaType.APPLICATION_JSON,
+            consumes = MediaType.APPLICATION_JSON)
+    public HttpResponse<List<Customer>> getCustomers() {
+        return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomers());
+    }
+
 
     @Get(value = "/{customerId}",
             processes = MediaType.APPLICATION_JSON,

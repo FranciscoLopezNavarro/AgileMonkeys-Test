@@ -6,6 +6,8 @@ import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -27,11 +29,6 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
     }
 
     @Override
-    public Optional<CustomerEntity> findCustomerByDocumentId(String documentId) {
-        return customerRepository.findByDocumentId(documentId);
-    }
-
-    @Override
     public Optional<CustomerEntity> findCustomerById(Long customerId) {
         return customerRepository.findById(customerId);
     }
@@ -39,5 +36,12 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
     @Override
     public void deleteCustomer(CustomerEntity customerEntity) {
         customerRepository.delete(customerEntity);
+    }
+
+    @Override
+    public List<CustomerEntity> findAll() {
+        List<CustomerEntity> entitiesList = new ArrayList<>();
+        customerRepository.findAll().iterator().forEachRemaining(entitiesList::add);
+        return entitiesList;
     }
 }
