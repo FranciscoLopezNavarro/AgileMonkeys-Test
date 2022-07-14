@@ -64,6 +64,7 @@ public class CustomerServiceImpl implements CustomerServiceApi {
      * Throws an exception if the customer does not exist.
      *
      * @param customerId The customer identifier
+     * @return The updated customer
      */
     @Override
     public Customer updateCustomer(Long customerId, SaveCustomerRequest saveCustomerRequest) {
@@ -90,9 +91,17 @@ public class CustomerServiceImpl implements CustomerServiceApi {
         customerDaoService.findCustomerById(customerId).ifPresent(customerDaoService::deleteCustomer);
     }
 
+    /**
+     * Returns a list with all the customers in the system.
+     *
+     * @return The Customer list
+     */
     @Override
     public List<Customer> getCustomers() {
-        return customerDaoService.findAll().stream().map(this::mapCustomerEntityToCustomerDTO).collect(Collectors.toList());
+        return customerDaoService.findAll()
+                .stream()
+                .map(this::mapCustomerEntityToCustomerDTO)
+                .collect(Collectors.toList());
     }
 
 
