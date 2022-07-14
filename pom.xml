@@ -36,4 +36,7 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
+    <modules>
+        <module>customer</module>
+    </modules>
 </project>
