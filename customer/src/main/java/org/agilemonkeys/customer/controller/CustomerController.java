@@ -11,10 +11,11 @@ import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.api.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
 
+import java.util.List;
+
 @ExecuteOn(TaskExecutors.IO)
 @Controller(value = "/customers")
 public class CustomerController {
-
     private final CustomerServiceApi customerService;
 
     @Inject
@@ -22,6 +23,12 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    /**
+     * Creates a new customer
+     *
+     * @param saveCustomerRequest The request with the customer data
+     * @return The saved customer
+     */
     @Post(
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
@@ -29,6 +36,24 @@ public class CustomerController {
         return HttpResponse.status(HttpStatus.CREATED).body(customerService.createCustomer(saveCustomerRequest));
     }
 
+    /**
+     * Returns a list with all the customers in the system.
+     *
+     * @return The Customer list
+     */
+    @Get(
+            processes = MediaType.APPLICATION_JSON,
+            consumes = MediaType.APPLICATION_JSON)
+    public HttpResponse<List<Customer>> getCustomers() {
+        return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomers());
+    }
+
+    /**
+     * Get all the information of a Customer given his id.
+     *
+     * @param customerId The customer identifier
+     * @return The customer and all his information.
+     */
     @Get(value = "/{customerId}",
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
@@ -36,6 +61,14 @@ public class CustomerController {
         return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomerDetail(customerId));
     }
 
+    /**
+     * Updates an existing customer
+     * <p>
+     * Throws an exception if the customer does not exist.
+     *
+     * @param customerId The customer identifier
+     * @return The updated customer
+     */
     @Put(value = "/{customerId}",
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
@@ -43,6 +76,13 @@ public class CustomerController {
         return HttpResponse.status(HttpStatus.OK).body(customerService.updateCustomer(customerId, saveCustomerRequest));
     }
 
+    /**
+     * Delete a customer given its id.
+     * <p>
+     * As an idempotent method, DELETE won't to anything if the customer does not exits.
+     *
+     * @param customerId The customer identifier
+     */
     @Delete(value = "/{customerId}",
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)

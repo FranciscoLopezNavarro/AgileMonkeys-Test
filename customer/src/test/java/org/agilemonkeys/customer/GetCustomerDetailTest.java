@@ -11,6 +11,7 @@ import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 import org.exparity.hamcrest.date.InstantMatchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,17 +42,9 @@ class GetCustomerDetailTest {
                 .all();
     }
 
-
-    @Test
-    @DisplayName("Should return HTTP.405 if customerId is empty")
-    void shouldReturnHTTP405IfCustomerIdIsEmpty() {
-        RestAssured.given()
-                .pathParams("customerId", "")
-                .get("/customers/{customerId}")
-                .then()
-                .log()
-                .all()
-                .statusCode(405);
+    @AfterEach
+    private void cleanContext() {
+        customerRepository.deleteAll();
     }
 
     @Test
@@ -65,7 +58,6 @@ class GetCustomerDetailTest {
                 .all()
                 .statusCode(404)
                 .body("message", is("Customer not found."));
-
     }
 
     @Test

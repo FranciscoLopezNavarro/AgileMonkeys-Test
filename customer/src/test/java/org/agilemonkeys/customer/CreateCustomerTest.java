@@ -11,6 +11,7 @@ import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 import org.exparity.hamcrest.date.InstantMatchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +42,10 @@ class CreateCustomerTest {
                 .all();
     }
 
+    @AfterEach
+    private void cleanContext() {
+        customerRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("Should return HTTP.400 if name is empty")
