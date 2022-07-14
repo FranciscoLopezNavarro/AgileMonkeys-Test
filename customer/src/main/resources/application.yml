@@ -5,12 +5,12 @@ micronaut:
 
 datasources:
   default:
-    url: jdbc:h2:mem:devDb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
-    schema-generate: CREATE_DROP
-    dialect: H2
+    url: jdbc:postgresql://localhost:5432/postgres
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: 'postgres'
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+    maximum-pool-size: 1
 
 
 jpa:
@@ -23,4 +23,9 @@ jpa:
     entity-scan:
       packages: 'org.agilemonkeys.customer.persistence.entity'
 
-
+flyway:
+  datasources:
+    default:
+      enabled: true
+      baseline-on-migrate: true
+      table: customers_flyway_schema_history
