@@ -3,9 +3,7 @@ package org.agilemonkeys.customer.controller;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
@@ -30,5 +28,13 @@ public class CustomerController {
     public HttpResponse<Customer> saveCustomer(@Body SaveCustomerRequest saveCustomerRequest) {
 
         return HttpResponse.status(HttpStatus.CREATED).body(customerService.saveCustomer(saveCustomerRequest));
+    }
+
+    @Get(value = "/{customerId}",
+            processes = MediaType.APPLICATION_JSON,
+            consumes = MediaType.APPLICATION_JSON)
+    public HttpResponse<Customer> getCustomerDetail(@PathVariable Long customerId) {
+
+        return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomerDetail(customerId));
     }
 }

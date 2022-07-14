@@ -8,4 +8,6 @@ public interface CustomerDaoServiceApi {
     CustomerEntity saveCustomer(CustomerEntity customerEntity);
 
     Optional<CustomerEntity> findCustomerByDocumentId(String documentId);
+
+    Optional<CustomerEntity> findCustomerById(Long customerId);
 }

@@ -2,6 +2,7 @@ package org.agilemonkeys.customer.persistence.dao;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 
@@ -25,5 +26,10 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
     @Override
     public Optional<CustomerEntity> findCustomerByDocumentId(String documentId) {
         return customerRepository.findByDocumentId(documentId);
+    }
+
+    @Override
+    public Optional<CustomerEntity> findCustomerById(Long customerId) {
+        return customerRepository.findById(customerId);
     }
 }

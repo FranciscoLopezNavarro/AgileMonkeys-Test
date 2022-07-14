@@ -14,10 +14,7 @@ import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
 @Singleton
 public class CustomerServiceImpl implements CustomerServiceApi {
-
-
     private final CustomerDaoServiceApi customerDaoService;
-
     private final MapperService mapperService;
 
     @Inject
@@ -37,8 +34,26 @@ public class CustomerServiceImpl implements CustomerServiceApi {
         validateSaveCustomerRequest(saveCustomerRequest);
 
         var savedCustomer = createCustomer(saveCustomerRequest);
-        return mapperService.getMapper().map(savedCustomer, Customer.class);
+        return mapCustomerEntityToCustomerDTO(savedCustomer);
     }
+
+    /**
+     * Get all the information of a Customer given his id.
+     * <p>
+     * Throws an exception if the customer does not exist.
+     *
+     * @param customerId The customer identifier
+     * @return The customer and all his information.
+     */
+    @Override
+    public Customer getCustomerDetail(Long customerId) {
+        var customer = customerDaoService.findCustomerById(customerId);
+        if (customer.isEmpty())
+            throw new HttpStatusException(HttpStatus.NOT_FOUND, new CustomError("Customer not found."));
+
+        return mapCustomerEntityToCustomerDTO(customer.get());
+    }
+
 
     /**
      * Creates a customer into the database.
@@ -71,5 +86,16 @@ public class CustomerServiceImpl implements CustomerServiceApi {
 
         if (StringUtils.isEmpty(saveCustomerRequest.getDocumentId()))
             throw new HttpStatusException(HttpStatus.BAD_REQUEST, new CustomError("The customer documentId is mandatory."));
+    }
+
+
+    /**
+     * Build a Customer object from a CustomerEntity object
+     *
+     * @param customerEntity the customer entity object to be mapped
+     * @return the Customer object
+     */
+    private Customer mapCustomerEntityToCustomerDTO(CustomerEntity customerEntity) {
+        return mapperService.getMapper().map(customerEntity, Customer.class);
     }
 }
