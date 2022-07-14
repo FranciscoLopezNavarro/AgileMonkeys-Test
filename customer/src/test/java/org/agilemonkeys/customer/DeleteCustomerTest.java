@@ -15,13 +15,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @MicronautTest(transactional = false)
-class GetCustomerDetailTest {
+class DeleteCustomerTest {
 
     @Inject
     private EmbeddedServer server;
@@ -47,7 +48,7 @@ class GetCustomerDetailTest {
     void shouldReturnHTTP405IfCustomerIdIsEmpty() {
         RestAssured.given()
                 .pathParams("customerId", "")
-                .get("/customers/{customerId}")
+                .delete("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
@@ -55,22 +56,20 @@ class GetCustomerDetailTest {
     }
 
     @Test
-    @DisplayName("Should return HTTP.404 if customer does not exists")
-    void shouldReturnHTTP404IfCustomerDoesNotExists() {
+    @DisplayName("Should return HTTP.204 if customer does not exists (Delete = Idempotent method)")
+    void shouldReturnHTTP204IfCustomerDoesNotExists() {
         RestAssured.given()
                 .pathParams("customerId", "2")
-                .get("/customers/{customerId}")
+                .delete("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
-                .statusCode(404)
-                .body("message", is("Customer not found."));
-
+                .statusCode(204);
     }
 
     @Test
-    @DisplayName("Should return HTTP.200 and customer if it exists")
-    void shouldReturnHTTP201AndCreateNewCustomer() {
+    @DisplayName("Should return HTTP.204 and delete customer if it exists")
+    void shouldReturnHTTP204AndCreateNewCustomer() {
 
         var entityCustomer = new CustomerEntity();
         entityCustomer.setName("Francisco");
@@ -81,19 +80,12 @@ class GetCustomerDetailTest {
 
         var customer = RestAssured.given()
                 .pathParams("customerId", savedCustomer.getId())
-                .get("/customers/{customerId}")
+                .delete("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
-                .statusCode(200)
-                .extract()
-                .body().as(Customer.class);
+                .statusCode(204);
 
-        assertThat(customer, notNullValue());
-        assertThat(customer.getCustomerId(), notNullValue());
-        assertThat(customer.getName(), is("Francisco"));
-        assertThat(customer.getSurname(), is("Lopez"));
-        assertThat(customer.getDocumentId(), is("54353453Y"));
-        assertThat(savedCustomer.getCreatedDate(), InstantMatchers.before(Instant.now()));
+        assertThat(customerRepository.findById(savedCustomer.getId()), is(Optional.empty()));
     }
 }

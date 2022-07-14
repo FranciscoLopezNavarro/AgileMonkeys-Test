@@ -51,7 +51,7 @@ class SaveCustomerTest {
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"543214G\"\n" +
                         "}")
-                .post("/customer")
+                .post("/customers")
                 .then()
                 .log()
                 .all()
@@ -69,7 +69,7 @@ class SaveCustomerTest {
                         "  \"surname\": \"\",\n" +
                         "  \"documentId\": \"543214G\"\n" +
                         "}")
-                .post("/customer")
+                .post("/customers")
                 .then()
                 .log()
                 .all()
@@ -87,7 +87,7 @@ class SaveCustomerTest {
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"\"\n" +
                         "}")
-                .post("/customer")
+                .post("/customers")
                 .then()
                 .log()
                 .all()
@@ -105,7 +105,7 @@ class SaveCustomerTest {
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"54353453Y\"\n" +
                         "}")
-                .post("/customer")
+                .post("/customers")
                 .then()
                 .log()
                 .all()
@@ -139,7 +139,7 @@ class SaveCustomerTest {
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"54353453Y\"\n" +
                         "}")
-                .post("/customer")
+                .post("/customers")
                 .then()
                 .log()
                 .all()
