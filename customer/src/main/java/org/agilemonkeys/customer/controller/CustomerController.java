@@ -31,5 +31,4 @@ public class CustomerController {
 
         return HttpResponse.status(HttpStatus.CREATED).body(customerService.saveCustomer(saveCustomerRequest));
     }
-3213122131231
 }
