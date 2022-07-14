@@ -20,7 +20,10 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
 
     @Override
     public CustomerEntity saveCustomer(CustomerEntity customerEntity) {
-        return customerRepository.save(customerEntity);
+        if (customerEntity.getId() == null)
+            return customerRepository.save(customerEntity);
+        else
+            return customerRepository.update(customerEntity);
     }
 
     @Override

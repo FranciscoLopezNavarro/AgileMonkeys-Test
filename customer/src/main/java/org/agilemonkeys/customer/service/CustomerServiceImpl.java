@@ -12,6 +12,8 @@ import org.agilemonkeys.customer.mapper.MapperService;
 import org.agilemonkeys.customer.persistence.dao.CustomerDaoServiceApi;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
+import java.util.Optional;
+
 @Singleton
 public class CustomerServiceImpl implements CustomerServiceApi {
     private final CustomerDaoServiceApi customerDaoService;
@@ -24,34 +26,54 @@ public class CustomerServiceImpl implements CustomerServiceApi {
     }
 
     /**
-     * Save a customer
+     * Creates a new customer
      *
      * @param saveCustomerRequest The request with the customer data
      * @return The saved customer
      */
     @Override
-    public Customer saveCustomer(SaveCustomerRequest saveCustomerRequest) {
+    public Customer createCustomer(SaveCustomerRequest saveCustomerRequest) {
         validateSaveCustomerRequest(saveCustomerRequest);
+        var customerToSave = mapCustomerEntityFromSaveCustomerRequest(saveCustomerRequest);
 
-        var savedCustomer = createCustomer(saveCustomerRequest);
-        return mapCustomerEntityToCustomerDTO(savedCustomer);
+        return mapCustomerEntityToCustomerDTO(saveCustomer(customerToSave));
     }
+
 
     /**
      * Get all the information of a Customer given his id.
-     * <p>
-     * Throws an exception if the customer does not exist.
      *
      * @param customerId The customer identifier
      * @return The customer and all his information.
      */
     @Override
     public Customer getCustomerDetail(Long customerId) {
-        var customer = customerDaoService.findCustomerById(customerId);
+        var customer = getCustomerIfExists(customerId);
         if (customer.isEmpty())
             throw new HttpStatusException(HttpStatus.NOT_FOUND, new CustomError("Customer not found."));
 
         return mapCustomerEntityToCustomerDTO(customer.get());
+    }
+
+
+    /**
+     * Updates an existing customer
+     * <p>
+     * Throws an exception if the customer does not exist.
+     *
+     * @param customerId The customer identifier
+     */
+    @Override
+    public Customer updateCustomer(Long customerId, SaveCustomerRequest saveCustomerRequest) {
+
+        var customer = getCustomerIfExists(customerId);
+        if (customer.isEmpty())
+            throw new HttpStatusException(HttpStatus.NOT_FOUND, new CustomError("Customer not found."));
+
+        validateSaveCustomerRequest(saveCustomerRequest);
+        mapperService.getMapper().map(saveCustomerRequest, customer.get());
+
+        return mapCustomerEntityToCustomerDTO(saveCustomer(customerDaoService.saveCustomer(customer.get())));
     }
 
     /**
@@ -66,23 +88,6 @@ public class CustomerServiceImpl implements CustomerServiceApi {
         customerDaoService.findCustomerById(customerId).ifPresent(customerDaoService::deleteCustomer);
     }
 
-
-    /**
-     * Creates a customer into the database.
-     * <p>
-     * If a Customer with the same documentId throws and exception
-     *
-     * @param saveCustomerRequest The request with the customer data
-     * @return The saved customer
-     */
-    private CustomerEntity createCustomer(SaveCustomerRequest saveCustomerRequest) {
-        var sameIdCustomer = customerDaoService.findCustomerByDocumentId(saveCustomerRequest.getDocumentId());
-
-        if (sameIdCustomer.isPresent())
-            throw new HttpStatusException(HttpStatus.CONFLICT, new CustomError("Customer with documentId: " + saveCustomerRequest.getDocumentId() + " already exists in the system."));
-
-        return customerDaoService.saveCustomer(mapperService.getMapper().map(saveCustomerRequest, CustomerEntity.class));
-    }
 
     /**
      * Validate the customer save request fields
@@ -102,6 +107,26 @@ public class CustomerServiceImpl implements CustomerServiceApi {
 
 
     /**
+     * Get all the information of a Customer given his id.
+     *
+     * @param customerId The customer identifier
+     * @return The customer and all his information.
+     */
+    private Optional<CustomerEntity> getCustomerIfExists(Long customerId) {
+        return customerDaoService.findCustomerById(customerId);
+    }
+
+    /**
+     * Saves a Customer Entity object into database
+     *
+     * @param customerEntity the customer entity object to be saved
+     * @return the Customer object
+     */
+    private CustomerEntity saveCustomer(CustomerEntity customerEntity) {
+        return customerDaoService.saveCustomer(customerEntity);
+    }
+
+    /**
      * Build a Customer object from a CustomerEntity object
      *
      * @param customerEntity the customer entity object to be mapped
@@ -110,4 +135,15 @@ public class CustomerServiceImpl implements CustomerServiceApi {
     private Customer mapCustomerEntityToCustomerDTO(CustomerEntity customerEntity) {
         return mapperService.getMapper().map(customerEntity, Customer.class);
     }
+
+    /**
+     * Build a Customer Entity from a Save Customer request
+     *
+     * @param saveCustomerRequest the request object
+     * @return the Customer entity object
+     */
+    private CustomerEntity mapCustomerEntityFromSaveCustomerRequest(SaveCustomerRequest saveCustomerRequest) {
+        return mapperService.getMapper().map(saveCustomerRequest, CustomerEntity.class);
+    }
+
 }

@@ -15,6 +15,9 @@ public class Customer {
     private Instant createdDate;
     private String createdBy;
 
+    private Instant updatedDate;
+
+    private String updatedBy;
 
     public Long getCustomerId() {
         return customerId;
@@ -62,5 +65,21 @@ public class Customer {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Instant getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Instant updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }
