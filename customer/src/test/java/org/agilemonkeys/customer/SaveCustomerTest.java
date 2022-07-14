@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class SaveCustomerTest {
 
     @Inject

@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class GetCustomerDetailTest {
 
     @Inject
@@ -43,16 +43,15 @@ class GetCustomerDetailTest {
 
 
     @Test
-    @DisplayName("Should return HTTP.404 if customerId is empty")
-    void shouldReturnHTTP404IfCustomerIdIsEmpty() {
+    @DisplayName("Should return HTTP.405 if customerId is empty")
+    void shouldReturnHTTP405IfCustomerIdIsEmpty() {
         RestAssured.given()
                 .pathParams("customerId", "")
                 .get("/customer/{customerId}")
                 .then()
                 .log()
                 .all()
-                .statusCode(404);
-
+                .statusCode(405);
     }
 
     @Test
