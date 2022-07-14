@@ -10,4 +10,6 @@ public interface CustomerDaoServiceApi {
     Optional<CustomerEntity> findCustomerByDocumentId(String documentId);
 
     Optional<CustomerEntity> findCustomerById(Long customerId);
+
+    void deleteCustomer(CustomerEntity customerEntity);
 }

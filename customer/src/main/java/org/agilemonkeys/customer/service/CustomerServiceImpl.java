@@ -54,6 +54,18 @@ public class CustomerServiceImpl implements CustomerServiceApi {
         return mapCustomerEntityToCustomerDTO(customer.get());
     }
 
+    /**
+     * Delete a customer given its id.
+     * <p>
+     * As an idempotent method, DELETE won't to anything if the customer does not exits.
+     *
+     * @param customerId The customer identifier
+     */
+    @Override
+    public void deleteCustomer(Long customerId) {
+        customerDaoService.findCustomerById(customerId).ifPresent(customerDaoService::deleteCustomer);
+    }
+
 
     /**
      * Creates a customer into the database.
