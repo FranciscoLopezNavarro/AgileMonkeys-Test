@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @MicronautTest(transactional = false)
-class SaveCustomerTest {
+class UpdateCustomerTest {
 
     @Inject
     private EmbeddedServer server;
@@ -43,15 +43,60 @@ class SaveCustomerTest {
 
 
     @Test
-    @DisplayName("Should return HTTP.400 if name is empty")
-    void shouldReturnHTTP400IfNameIsEmpty() {
+    @DisplayName("Should return HTTP.405 customerId is not informed")
+    void shouldReturnHTTP405IfCustomerIdIsEmpty() {
         RestAssured.given()
+                .pathParams("customerId", "")
                 .body("{\n" +
                         "  \"name\": \"\",\n" +
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"543214G\"\n" +
                         "}")
-                .post("/customers")
+                .put("/customers/{customerId}")
+                .then()
+                .log()
+                .all()
+                .statusCode(405);
+
+    }
+
+    @Test
+    @DisplayName("Should return HTTP.404 if customer does not exists")
+    void shouldReturnHTTP404IfCustomerDoesNotExists() {
+        RestAssured.given()
+                .pathParams("customerId", "12")
+                .body("{\n" +
+                        "  \"name\": \"\",\n" +
+                        "  \"surname\": \"Lopez\",\n" +
+                        "  \"documentId\": \"543214G\"\n" +
+                        "}")
+                .put("/customers/{customerId}")
+                .then()
+                .log()
+                .all()
+                .statusCode(404)
+                .body("message", is("Customer not found."));
+
+    }
+
+    @Test
+    @DisplayName("Should return HTTP.400 if name is empty")
+    void shouldReturnHTTP400IfNameIsEmpty() {
+        var entityCustomer = new CustomerEntity();
+        entityCustomer.setName("Francisco");
+        entityCustomer.setSurname("Lopez");
+        entityCustomer.setDocumentId("54353453Y");
+
+        var savedCustomer = customerRepository.save(entityCustomer);
+
+        RestAssured.given()
+                .pathParams("customerId", savedCustomer.getId())
+                .body("{\n" +
+                        "  \"name\": \"\",\n" +
+                        "  \"surname\": \"Lopez\",\n" +
+                        "  \"documentId\": \"543214G\"\n" +
+                        "}")
+                .put("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
@@ -60,16 +105,25 @@ class SaveCustomerTest {
 
     }
 
+
     @Test
     @DisplayName("Should return HTTP.400 if surname is empty")
     void shouldReturnHTTP400IfSurnameIsEmpty() {
+        var entityCustomer = new CustomerEntity();
+        entityCustomer.setName("Francisco");
+        entityCustomer.setSurname("Lopez");
+        entityCustomer.setDocumentId("54353453Y");
+
+        var savedCustomer = customerRepository.save(entityCustomer);
+
         RestAssured.given()
+                .pathParams("customerId", savedCustomer.getId())
                 .body("{\n" +
                         "  \"name\": \"Francisco\",\n" +
                         "  \"surname\": \"\",\n" +
                         "  \"documentId\": \"543214G\"\n" +
                         "}")
-                .post("/customers")
+                .put("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
@@ -81,13 +135,21 @@ class SaveCustomerTest {
     @Test
     @DisplayName("Should return HTTP.400 if documentId is empty")
     void shouldReturnHTTP400IfDocumentIdIsEmpty() {
+        var entityCustomer = new CustomerEntity();
+        entityCustomer.setName("Francisco");
+        entityCustomer.setSurname("Lopez");
+        entityCustomer.setDocumentId("54353453Y");
+
+        var savedCustomer = customerRepository.save(entityCustomer);
+
         RestAssured.given()
+                .pathParams("customerId", savedCustomer.getId())
                 .body("{\n" +
                         "  \"name\": \"Francisco\",\n" +
                         "  \"surname\": \"Lopez\",\n" +
                         "  \"documentId\": \"\"\n" +
                         "}")
-                .post("/customers")
+                .put("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
@@ -97,53 +159,37 @@ class SaveCustomerTest {
     }
 
     @Test
-    @DisplayName("Should return HTTP.201 and create new customer")
+    @DisplayName("Should return HTTP.200 and update the  customer")
     void shouldReturnHTTP201AndCreateNewCustomer() {
-        var savedCustomer = RestAssured.given()
-                .body("{\n" +
-                        "  \"name\": \"Francisco\",\n" +
-                        "  \"surname\": \"Lopez\",\n" +
-                        "  \"documentId\": \"54353453Y\"\n" +
-                        "}")
-                .post("/customers")
-                .then()
-                .log()
-                .all()
-                .statusCode(201)
-                .extract()
-                .body().as(Customer.class);
-
-        assertThat(savedCustomer, notNullValue());
-        assertThat(savedCustomer.getCustomerId(), notNullValue());
-        assertThat(savedCustomer.getName(), is("Francisco"));
-        assertThat(savedCustomer.getSurname(), is("Lopez"));
-        assertThat(savedCustomer.getDocumentId(), is("54353453Y"));
-        assertThat(savedCustomer.getCreatedDate(), InstantMatchers.before(Instant.now()));
-    }
-
-    @Test
-    @DisplayName("Should return HTTP.409 if there already exists one customer with the same documentId")
-    void shouldReturnHTTP409IfCustomerWithSameCustomerIdExists() {
-
         var entityCustomer = new CustomerEntity();
         entityCustomer.setName("Francisco");
         entityCustomer.setSurname("Lopez");
-        entityCustomer.setDocumentId("54353453Y");
+        entityCustomer.setDocumentId("111111Y");
 
-        customerRepository.save(entityCustomer);
+        var savedCustomer = customerRepository.save(entityCustomer);
 
-
-        var savedCustomer = RestAssured.given()
+        var updatedCustomer = RestAssured.given()
+                .pathParams("customerId", savedCustomer.getId())
                 .body("{\n" +
-                        "  \"name\": \"Francisco\",\n" +
-                        "  \"surname\": \"Lopez\",\n" +
+                        "  \"name\": \"Pepe\",\n" +
+                        "  \"surname\": \"Martinez\",\n" +
                         "  \"documentId\": \"54353453Y\"\n" +
                         "}")
-                .post("/customers")
+                .put("/customers/{customerId}")
                 .then()
                 .log()
                 .all()
-                .statusCode(409)
-                .body("message", is("Customer with documentId: 54353453Y already exists in the system."));
+                .statusCode(200)
+                .extract()
+                .body().as(Customer.class);
+
+        assertThat(updatedCustomer, notNullValue());
+        assertThat(updatedCustomer.getCustomerId(), notNullValue());
+        assertThat(updatedCustomer.getName(), is("Pepe"));
+        assertThat(updatedCustomer.getSurname(), is("Martinez"));
+        assertThat(updatedCustomer.getDocumentId(), is("54353453Y"));
+        assertThat(updatedCustomer.getCreatedDate(), InstantMatchers.before(Instant.now()));
+        assertThat(updatedCustomer.getUpdatedDate(), InstantMatchers.before(Instant.now()));
+
     }
 }

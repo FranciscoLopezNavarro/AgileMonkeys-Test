@@ -3,7 +3,6 @@ package org.agilemonkeys.customer.controller;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -27,7 +26,7 @@ public class CustomerController {
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<Customer> saveCustomer(@Body SaveCustomerRequest saveCustomerRequest) {
-        return HttpResponse.status(HttpStatus.CREATED).body(customerService.saveCustomer(saveCustomerRequest));
+        return HttpResponse.status(HttpStatus.CREATED).body(customerService.createCustomer(saveCustomerRequest));
     }
 
     @Get(value = "/{customerId}",
@@ -35,6 +34,13 @@ public class CustomerController {
             consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<Customer> getCustomerDetail(@PathVariable Long customerId) {
         return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomerDetail(customerId));
+    }
+
+    @Put(value = "/{customerId}",
+            processes = MediaType.APPLICATION_JSON,
+            consumes = MediaType.APPLICATION_JSON)
+    public HttpResponse<Customer> updateCustomer(@PathVariable Long customerId, @Body SaveCustomerRequest saveCustomerRequest) {
+        return HttpResponse.status(HttpStatus.OK).body(customerService.updateCustomer(customerId, saveCustomerRequest));
     }
 
     @Delete(value = "/{customerId}",
