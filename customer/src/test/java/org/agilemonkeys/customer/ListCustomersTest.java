@@ -84,4 +84,110 @@ class ListCustomersTest {
         assertThat(customerList.get(0).getSurname(), is("Lopez"));
         assertThat(customerList.get(0).getDocumentId(), is("54353453Y"));
     }
+
+    //Pagination Tests
+
+    @Test
+    @DisplayName("Should set default elements per page if not defined")
+    public void shouldSetDefaultElementsPerPageIfNotDefined() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(0))
+                .body("totalSize", is(50))
+                .body("totalPages", is(3))
+                .body("customers.size()", is(20));
+    }
+
+    @Test
+    @DisplayName("Should return 2 page and set default elements per page")
+    public void shouldReturn2PageAndSetDefaultElementsPerPage() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?page=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(1))
+                .body("totalSize", is(50))
+                .body("totalPages", is(3))
+                .body("movements.size()", is(20));
+
+    }
+
+
+    @Test
+    @DisplayName("Should return one element per page and all as total page")
+    public void shouldReturnOneElementPerPageAndAllAsTotalPage() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?elementsPerPage=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(0))
+                .body("totalSize", is(50))
+                .body("totalPages", is(50))
+                .body("movements.size()", is(1));
+
+    }
+
+
+    @Test
+    @DisplayName("Should return 1 element per page and page 20")
+    public void shouldReturn1ElementPerPageAndPage20() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?page=20&elementsPerPage=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(20))
+                .body("totalSize", is(50))
+                .body("totalPages", is(50))
+                .body("movements.size()", is(1));
+    }
 }
