@@ -1,7 +1,7 @@
 package org.agilemonkeys.customer.service;
 
-import org.agilemonkeys.customer.api.Customer;
-import org.agilemonkeys.customer.api.SaveCustomerRequest;
+import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 
 import java.util.List;
 

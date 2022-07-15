@@ -1,4 +1,4 @@
-package org.agilemonkeys.customer.api;
+package org.agilemonkeys.customer.api.model;
 
 import io.micronaut.core.annotation.Introspected;
 

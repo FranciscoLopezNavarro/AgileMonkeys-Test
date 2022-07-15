@@ -1,8 +1,7 @@
-package org.agilemonkeys.customer.api;
+package org.agilemonkeys.customer.api.model;
 
 import io.micronaut.core.annotation.Introspected;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Introspected
@@ -12,10 +11,10 @@ public class Customer {
     private String name;
     private String surname;
     private String documentId;
-    private Instant createdDate;
+    private LocalDateTime createdDate;
     private String createdBy;
 
-    private Instant updatedDate;
+    private LocalDateTime updatedDate;
 
     private String updatedBy;
 
@@ -51,11 +50,11 @@ public class Customer {
         this.documentId = documentId;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -67,11 +66,11 @@ public class Customer {
         this.createdBy = createdBy;
     }
 
-    public Instant getUpdatedDate() {
+    public LocalDateTime getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Instant updatedDate) {
+    public void setUpdatedDate(LocalDateTime updatedDate) {
         this.updatedDate = updatedDate;
     }
 

@@ -5,8 +5,8 @@ import com.github.dozermapper.core.Mapper;
 import com.github.dozermapper.core.loader.api.BeanMappingBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
-import org.agilemonkeys.customer.api.Customer;
-import org.agilemonkeys.customer.api.SaveCustomerRequest;
+import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
 @Singleton
