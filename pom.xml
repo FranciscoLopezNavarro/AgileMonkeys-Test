@@ -38,5 +38,6 @@
 
     <modules>
         <module>customer</module>
+        <module>user</module>
     </modules>
 </project>
