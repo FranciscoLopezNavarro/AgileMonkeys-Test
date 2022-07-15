@@ -7,7 +7,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -47,13 +47,18 @@ class ListCustomersTest {
     @Test
     @DisplayName("Should return HTTP.200 and empty list if there isn't any customer")
     void shouldReturnHTTP200AndEmptyListIfNoMovements() {
-        RestAssured.given()
+        var customersPaginatedList = RestAssured.given()
                 .get("/customers")
                 .then()
                 .log()
                 .all()
                 .statusCode(200)
-                .body("customers.size()", is(0));
+                .extract()
+                .body().as(CustomersPaginatedList.class);
+
+
+        assertThat(customersPaginatedList, notNullValue());
+        assertThat(customersPaginatedList.getCustomers().size(), is(0));
     }
 
     @Test
@@ -67,7 +72,7 @@ class ListCustomersTest {
         var savedCustomer = customerRepository.save(entityCustomer);
 
 
-        var customerList = RestAssured.given()
+        var customersPaginatedList = RestAssured.given()
                 .get("/customers")
                 .then()
                 .log()
@@ -75,13 +80,119 @@ class ListCustomersTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .jsonPath().getList(".", Customer.class);
+                .as(CustomersPaginatedList.class);
 
-        assertThat(customerList, notNullValue());
-        assertThat(customerList.size(), is(1));
-        assertThat(customerList.get(0).getCustomerId(), notNullValue());
-        assertThat(customerList.get(0).getName(), is("Francisco"));
-        assertThat(customerList.get(0).getSurname(), is("Lopez"));
-        assertThat(customerList.get(0).getDocumentId(), is("54353453Y"));
+        assertThat(customersPaginatedList, notNullValue());
+        assertThat(customersPaginatedList.getCustomers().size(), is(1));
+        assertThat(customersPaginatedList.getCustomers().get(0).getCustomerId(), notNullValue());
+        assertThat(customersPaginatedList.getCustomers().get(0).getName(), is("Francisco"));
+        assertThat(customersPaginatedList.getCustomers().get(0).getSurname(), is("Lopez"));
+        assertThat(customersPaginatedList.getCustomers().get(0).getDocumentId(), is("54353453Y"));
+    }
+
+    //Pagination Tests
+
+    @Test
+    @DisplayName("Should set default elements per page if not defined")
+    public void shouldSetDefaultElementsPerPageIfNotDefined() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(0))
+                .body("totalSize", is(50))
+                .body("totalPages", is(3))
+                .body("customers.size()", is(20));
+    }
+
+    @Test
+    @DisplayName("Should return 2 page and set default elements per page")
+    public void shouldReturn2PageAndSetDefaultElementsPerPage() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?page=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(1))
+                .body("totalSize", is(50))
+                .body("totalPages", is(3))
+                .body("customers.size()", is(20));
+
+    }
+
+
+    @Test
+    @DisplayName("Should return one element per page and all as total page")
+    public void shouldReturnOneElementPerPageAndAllAsTotalPage() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?elementsPerPage=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(0))
+                .body("totalSize", is(50))
+                .body("totalPages", is(50))
+                .body("customers.size()", is(1));
+
+    }
+
+
+    @Test
+    @DisplayName("Should return 1 element per page and page 20")
+    public void shouldReturn1ElementPerPageAndPage20() {
+
+        for (int i = 0; i <= 49; i++) {
+            var entityCustomer = new CustomerEntity();
+            entityCustomer.setName("Francisco");
+            entityCustomer.setSurname("Lopez");
+            entityCustomer.setDocumentId("54353453Y");
+
+            customerRepository.save(entityCustomer);
+        }
+
+        RestAssured.given()
+                .get("/customers?page=20&elementsPerPage=1")
+                .then()
+                .log()
+                .all()
+                .statusCode(200)
+                .body("pageNumber", is(20))
+                .body("totalSize", is(50))
+                .body("totalPages", is(50))
+                .body("customers.size()", is(1));
     }
 }

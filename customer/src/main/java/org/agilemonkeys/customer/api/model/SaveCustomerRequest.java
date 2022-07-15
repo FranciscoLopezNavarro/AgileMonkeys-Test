@@ -2,8 +2,10 @@ package org.agilemonkeys.customer.api.model;
 
 import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
+
 @Introspected
-public class SaveCustomerRequest {
+public class SaveCustomerRequest implements Serializable {
     private String name;
     private String surname;
     private String documentId;

@@ -1,8 +1,9 @@
 package org.agilemonkeys.customer.persistence.dao;
 
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CustomerDaoServiceApi {
@@ -34,9 +35,10 @@ public interface CustomerDaoServiceApi {
     void deleteCustomer(CustomerEntity customerEntity);
 
     /**
-     * Return all the customers in the database
+     * Return all the customers with pagination in the database
      *
-     * @return The customer entity list
+     * @param pageable the pagination configuration
+     * @return The customer entity page
      */
-    List<CustomerEntity> findAll();
+    Page<CustomerEntity> findAll(Pageable pageable);
 }

@@ -2,10 +2,11 @@ package org.agilemonkeys.customer.api.model;
 
 import io.micronaut.core.annotation.Introspected;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Introspected
-public class Customer {
+public class Customer implements Serializable {
 
     private Long customerId;
     private String name;

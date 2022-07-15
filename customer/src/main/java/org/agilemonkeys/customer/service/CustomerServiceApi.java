@@ -1,9 +1,8 @@
 package org.agilemonkeys.customer.service;
 
 import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
-
-import java.util.List;
 
 public interface CustomerServiceApi {
     /**
@@ -44,7 +43,11 @@ public interface CustomerServiceApi {
     /**
      * Returns a list with all the customers in the system.
      *
-     * @return The Customer list
+     * @return A paginated list that contains:
+     * * * The current page number
+     * * * The total size of elements in database
+     * * * The total pages generated based on the pagination fields given in the request
+     * * * A list with the found customers. By default, an empty one if no customers found.
      */
-    List<Customer> getCustomers();
+    CustomersPaginatedList getAllCustomers(Integer page, Integer elementsPerPage);
 }

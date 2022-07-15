@@ -1,12 +1,12 @@
 package org.agilemonkeys.customer.persistence.dao;
 
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -58,14 +58,13 @@ public class CustomerDaoServiceImpl implements CustomerDaoServiceApi {
     }
 
     /**
-     * Return all the customers in the database
+     * Return all the customers with pagination in the database
      *
-     * @return The customer entity list
+     * @param pageable the pagination configuration
+     * @return The customer entity page
      */
     @Override
-    public List<CustomerEntity> findAll() {
-        List<CustomerEntity> entitiesList = new ArrayList<>();
-        customerRepository.findAll().iterator().forEachRemaining(entitiesList::add);
-        return entitiesList;
+    public Page<CustomerEntity> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 }
