@@ -1,18 +1,22 @@
 package org.agilemonkeys.customer.service;
 
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.agilemonkeys.customer.api.error.CustomError;
 import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.mapper.MapperService;
 import org.agilemonkeys.customer.persistence.dao.CustomerDaoServiceApi;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -94,14 +98,20 @@ public class CustomerServiceImpl implements CustomerServiceApi {
     /**
      * Returns a list with all the customers in the system.
      *
-     * @return The Customer list
+     * @return A paginated list that contains:
+     * * * The current page number
+     * * * The total size of elements in database
+     * * * The total pages generated based on the pagination fields given in the request
+     * * * A list with the found movements. By default, an empty one if no movements found.
      */
     @Override
-    public List<Customer> getCustomers() {
-        return customerDaoService.findAll()
-                .stream()
-                .map(this::mapCustomerEntityToCustomerDTO)
-                .collect(Collectors.toList());
+    public CustomersPaginatedList getAllCustomers(Integer page, Integer elementsPerPage) {
+
+        var customerEntitiesPaged = customerDaoService.findAll(definePagination(page, elementsPerPage));
+        if (customerEntitiesPaged.getContent().isEmpty())
+            return mapPageToPaginatedListResponse(Page.empty());
+
+        return mapPageToPaginatedListResponse(customerEntitiesPaged);
     }
 
 
@@ -160,6 +170,42 @@ public class CustomerServiceImpl implements CustomerServiceApi {
      */
     private CustomerEntity mapCustomerEntityFromSaveCustomerRequest(SaveCustomerRequest saveCustomerRequest) {
         return mapperService.getMapper().map(saveCustomerRequest, CustomerEntity.class);
+    }
+
+    /**
+     * Determine the pagination based on the page and elements per page.
+     * <p>
+     * If no pagination is not defined, we are going to ignore the pagination. If only page is filled,
+     * we are going to set 20 element per page.
+     * <p>
+     * Finally, if both page and elements are filled, the pagination is going to define
+     * the requested page and split based on the elements number desired in the request.
+     *
+     * @param page            The page number
+     * @param elementsPerPage the elements per page
+     * @return The search pagination
+     */
+    private Pageable definePagination(Integer page, Integer elementsPerPage) {
+        return Pageable.from(Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(elementsPerPage, 20));
+    }
+
+
+    /**
+     * Build the paginated result object from the Page object obtained from database
+     *
+     * @param pagedCustomerList The paginated result found in database
+     * @return A mapped search response.
+     */
+    private CustomersPaginatedList mapPageToPaginatedListResponse(Page<CustomerEntity> pagedCustomerList) {
+        var response = new CustomersPaginatedList();
+        response.setPageNumber(pagedCustomerList.getPageNumber());
+        response.setTotalSize(pagedCustomerList.getTotalSize());
+        response.setTotalPages(Math.max(pagedCustomerList.getTotalPages(), 1));
+        response.setCustomers(
+                pagedCustomerList
+                        .map(customerEntity -> mapperService.getMapper().map(customerEntity, Customer.class))
+                        .getContent());
+        return response;
     }
 
 }

@@ -1,5 +1,7 @@
 package org.agilemonkeys.customer.controller;
 
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -8,6 +10,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
 import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
 
@@ -44,8 +47,9 @@ public class CustomerController {
     @Get(
             processes = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
-    public HttpResponse<List<Customer>> getCustomers() {
-        return HttpResponse.status(HttpStatus.OK).body(customerService.getCustomers());
+    public HttpResponse<CustomersPaginatedList> getCustomers(@Nullable @QueryValue Integer page,
+                                                             @Nullable @QueryValue Integer elementsPerPage) {
+        return HttpResponse.status(HttpStatus.OK).body(customerService.getAllCustomers(page, elementsPerPage));
     }
 
     /**
