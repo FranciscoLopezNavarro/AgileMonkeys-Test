@@ -7,15 +7,15 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.Customer;
+import org.agilemonkeys.customer.api.model.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
-import org.exparity.hamcrest.date.InstantMatchers;
+import org.exparity.hamcrest.date.LocalDateTimeMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -193,8 +193,8 @@ class UpdateCustomerTest {
         assertThat(updatedCustomer.getName(), is("Pepe"));
         assertThat(updatedCustomer.getSurname(), is("Martinez"));
         assertThat(updatedCustomer.getDocumentId(), is("54353453Y"));
-        assertThat(updatedCustomer.getCreatedDate(), InstantMatchers.before(Instant.now()));
-        assertThat(updatedCustomer.getUpdatedDate(), InstantMatchers.before(Instant.now()));
+        assertThat(updatedCustomer.getCreatedDate(), LocalDateTimeMatchers.before(LocalDateTime.now()));
+        assertThat(updatedCustomer.getUpdatedDate(), LocalDateTimeMatchers.before(LocalDateTime.now()));
 
     }
 }

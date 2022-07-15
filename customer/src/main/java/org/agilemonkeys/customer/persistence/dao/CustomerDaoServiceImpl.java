@@ -2,7 +2,6 @@ package org.agilemonkeys.customer.persistence.dao;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 

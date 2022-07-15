@@ -7,8 +7,8 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.Customer;
-import org.agilemonkeys.customer.api.SaveCustomerRequest;
+import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
 
 import java.util.List;

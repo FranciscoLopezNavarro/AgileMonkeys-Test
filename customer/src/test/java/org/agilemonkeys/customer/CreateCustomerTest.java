@@ -7,15 +7,14 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.Customer;
-import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
+import org.agilemonkeys.customer.api.model.Customer;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
-import org.exparity.hamcrest.date.InstantMatchers;
+import org.exparity.hamcrest.date.LocalDateTimeMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -123,6 +122,6 @@ class CreateCustomerTest {
         assertThat(savedCustomer.getName(), is("Francisco"));
         assertThat(savedCustomer.getSurname(), is("Lopez"));
         assertThat(savedCustomer.getDocumentId(), is("54353453Y"));
-        assertThat(savedCustomer.getCreatedDate(), InstantMatchers.before(Instant.now()));
+        assertThat(savedCustomer.getCreatedDate(), LocalDateTimeMatchers.before(LocalDateTime.now()));
     }
 }

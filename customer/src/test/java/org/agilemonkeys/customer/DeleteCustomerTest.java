@@ -7,20 +7,16 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
-import org.exparity.hamcrest.date.InstantMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 @MicronautTest(transactional = false)
 class DeleteCustomerTest {

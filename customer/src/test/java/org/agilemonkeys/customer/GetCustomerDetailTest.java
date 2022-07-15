@@ -7,7 +7,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import org.agilemonkeys.customer.api.Customer;
+import org.agilemonkeys.customer.api.model.Customer;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 import org.exparity.hamcrest.date.InstantMatchers;
