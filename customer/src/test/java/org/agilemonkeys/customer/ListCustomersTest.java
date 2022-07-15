@@ -8,6 +8,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import org.agilemonkeys.customer.api.model.Customer;
+import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 import org.agilemonkeys.customer.persistence.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -47,13 +48,18 @@ class ListCustomersTest {
     @Test
     @DisplayName("Should return HTTP.200 and empty list if there isn't any customer")
     void shouldReturnHTTP200AndEmptyListIfNoMovements() {
-        RestAssured.given()
+        var customersPaginatedList = RestAssured.given()
                 .get("/customers")
                 .then()
                 .log()
                 .all()
                 .statusCode(200)
-                .body("customers.size()", is(0));
+                .extract()
+                .body().as(CustomersPaginatedList.class);
+
+
+        assertThat(customersPaginatedList, notNullValue());
+        assertThat(customersPaginatedList.getCustomers().size(), is(0));
     }
 
     @Test
@@ -67,7 +73,7 @@ class ListCustomersTest {
         var savedCustomer = customerRepository.save(entityCustomer);
 
 
-        var customerList = RestAssured.given()
+        var customersPaginatedList = RestAssured.given()
                 .get("/customers")
                 .then()
                 .log()
@@ -75,14 +81,14 @@ class ListCustomersTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .jsonPath().getList(".", Customer.class);
+                .as(CustomersPaginatedList.class);
 
-        assertThat(customerList, notNullValue());
-        assertThat(customerList.size(), is(1));
-        assertThat(customerList.get(0).getCustomerId(), notNullValue());
-        assertThat(customerList.get(0).getName(), is("Francisco"));
-        assertThat(customerList.get(0).getSurname(), is("Lopez"));
-        assertThat(customerList.get(0).getDocumentId(), is("54353453Y"));
+        assertThat(customersPaginatedList, notNullValue());
+        assertThat(customersPaginatedList.getCustomers().size(), is(1));
+        assertThat(customersPaginatedList.getCustomers().get(0).getCustomerId(), notNullValue());
+        assertThat(customersPaginatedList.getCustomers().get(0).getName(), is("Francisco"));
+        assertThat(customersPaginatedList.getCustomers().get(0).getSurname(), is("Lopez"));
+        assertThat(customersPaginatedList.getCustomers().get(0).getDocumentId(), is("54353453Y"));
     }
 
     //Pagination Tests
@@ -134,7 +140,7 @@ class ListCustomersTest {
                 .body("pageNumber", is(1))
                 .body("totalSize", is(50))
                 .body("totalPages", is(3))
-                .body("movements.size()", is(20));
+                .body("customers.size()", is(20));
 
     }
 
@@ -161,7 +167,7 @@ class ListCustomersTest {
                 .body("pageNumber", is(0))
                 .body("totalSize", is(50))
                 .body("totalPages", is(50))
-                .body("movements.size()", is(1));
+                .body("customers.size()", is(1));
 
     }
 
@@ -188,6 +194,6 @@ class ListCustomersTest {
                 .body("pageNumber", is(20))
                 .body("totalSize", is(50))
                 .body("totalPages", is(50))
-                .body("movements.size()", is(1));
+                .body("customers.size()", is(1));
     }
 }
