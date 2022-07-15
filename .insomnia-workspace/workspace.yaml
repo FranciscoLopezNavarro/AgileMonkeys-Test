@@ -1,0 +1,86 @@
+_type: export
+__export_format: 4
+__export_date: 2022-07-15T17:45:24.940Z
+__export_source: insomnia.desktop.app:v2022.4.2
+resources:
+  - _id: req_e523cc13a39a4e6983e41d08863dcfcc
+    parentId: wrk_2413b9169bba404399a3686ed44a9653
+    modified: 1657906211923
+    created: 1657470232520
+    url: http://localhost:8080/customers
+    name: Save Customer
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name":"Francisco",
+        	"surname":"Lopez",
+        	"documentId":"2313213Y"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_a553a719d0d8457fa0d20314cf097293
+    authentication: {}
+    metaSortKey: -1657470232520
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_2413b9169bba404399a3686ed44a9653
+    parentId: null
+    modified: 1657470232492
+    created: 1657470232492
+    name: New Document
+    description: ""
+    scope: design
+    _type: workspace
+  - _id: env_cdd525ee47c3271100e07a3d860a3f6b9540d08d
+    parentId: wrk_2413b9169bba404399a3686ed44a9653
+    modified: 1657470232511
+    created: 1657470232511
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1657470232511
+    _type: environment
+  - _id: jar_cdd525ee47c3271100e07a3d860a3f6b9540d08d
+    parentId: wrk_2413b9169bba404399a3686ed44a9653
+    modified: 1657470232516
+    created: 1657470232516
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_8463d533998f4077881bfb8978954a00
+    parentId: wrk_2413b9169bba404399a3686ed44a9653
+    modified: 1657470334929
+    created: 1657470232506
+    fileName: "The Agile Monkeys - Customer API "
+    contents: ""
+    contentType: yaml
+    _type: api_spec
+  - _id: uts_d37ee7668d504af0a284cdc2de9e5db8
+    parentId: wrk_2413b9169bba404399a3686ed44a9653
+    modified: 1657470431027
+    created: 1657470232522
+    name: Customer API Tests
+    _type: unit_test_suite
+  - _id: ut_230d489c62c248169b139877c5c1bb22
+    parentId: uts_d37ee7668d504af0a284cdc2de9e5db8
+    modified: 1657470407629
+    created: 1657470366198
+    requestId: req_e523cc13a39a4e6983e41d08863dcfcc
+    name: Returns 200
+    code: |-
+      const response1 = await insomnia.send();
+      expect(response1.status).to.equal(200);
+    _type: unit_test
