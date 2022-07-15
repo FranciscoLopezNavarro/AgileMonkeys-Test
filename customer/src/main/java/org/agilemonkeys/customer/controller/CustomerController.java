@@ -1,7 +1,6 @@
 package org.agilemonkeys.customer.controller;
 
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.model.Page;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -13,8 +12,6 @@ import org.agilemonkeys.customer.api.model.Customer;
 import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
-
-import java.util.List;
 
 @ExecuteOn(TaskExecutors.IO)
 @Controller(value = "/customers")

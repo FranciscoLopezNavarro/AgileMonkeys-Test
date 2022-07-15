@@ -15,10 +15,8 @@ import org.agilemonkeys.customer.mapper.MapperService;
 import org.agilemonkeys.customer.persistence.dao.CustomerDaoServiceApi;
 import org.agilemonkeys.customer.persistence.entity.CustomerEntity;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Singleton
 public class CustomerServiceImpl implements CustomerServiceApi {
@@ -102,7 +100,7 @@ public class CustomerServiceImpl implements CustomerServiceApi {
      * * * The current page number
      * * * The total size of elements in database
      * * * The total pages generated based on the pagination fields given in the request
-     * * * A list with the found movements. By default, an empty one if no movements found.
+     * * * A list with the found customers. By default, an empty one if no customers found.
      */
     @Override
     public CustomersPaginatedList getAllCustomers(Integer page, Integer elementsPerPage) {
