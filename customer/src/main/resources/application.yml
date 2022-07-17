@@ -1,7 +1,13 @@
 micronaut:
   application:
     name: customer
-
+  security:
+    token:
+      jwt:
+        signatures:
+          jwks:
+            auth0:
+              url: '${OAUTH_JWKS:`https://dev-lpjdaef2.us.auth0.com/.well-known/jwks.json`}'
 
 datasources:
   default:

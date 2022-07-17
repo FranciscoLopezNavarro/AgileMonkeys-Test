@@ -7,13 +7,17 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.security.annotation.Secured;
 import jakarta.inject.Inject;
 import org.agilemonkeys.customer.api.model.Customer;
 import org.agilemonkeys.customer.api.model.CustomersPaginatedList;
 import org.agilemonkeys.customer.api.model.SaveCustomerRequest;
 import org.agilemonkeys.customer.service.CustomerServiceApi;
 
+import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
+
 @ExecuteOn(TaskExecutors.IO)
+@Secured(IS_AUTHENTICATED)
 @Controller(value = "/customers")
 public class CustomerController {
     private final CustomerServiceApi customerService;
