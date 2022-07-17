@@ -39,5 +39,6 @@
     <modules>
         <module>customer</module>
         <module>user</module>
+        <module>gateway</module>
     </modules>
 </project>
